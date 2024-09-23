@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AccountStore {
-    private Map<String, User> uuidMap = new HashMap<>();
-    private Map<String, User> usernameMap = new HashMap<>();
+    private Map<String, UserAccount> uuidMap = new HashMap<>();
+    private Map<String, UserAccount> usernameMap = new HashMap<>();
     private final CookieConfig cookieConfig;
 
     public AccountStore() {
@@ -15,28 +15,28 @@ public class AccountStore {
         cookieConfig.setSameSiteOption(null);
     }
 
-    public User get(String uuid) {
-        User user = uuidMap.get(uuid);
-        if (user == null) {
+    public UserAccount get(String uuid) {
+        UserAccount account = uuidMap.get(uuid);
+        if (account == null) {
             //
             // NOTE: Would get from database.
             //
-            user = new User(uuid, "username", "******", null, "**********");
-            uuidMap.put(uuid, user);
+            account = new UserAccount(new User(uuid, "username", "******", "**********"), null);
+            uuidMap.put(uuid, account);
         }
-        return user;
+        return account;
     }
 
-    public User getByName(String username) {
-        User user = usernameMap.get(username);
-        if (user == null) {
+    public UserAccount getByName(String username) {
+        UserAccount account = usernameMap.get(username);
+        if (account == null) {
             //
             // NOTE: Would get from database.
             //
-            user = new User("uuid", username, "******", null, "*******");
-            usernameMap.put(username, user);
+            account = new UserAccount(new User("uuid", username, "******", "*******"), null);
+            usernameMap.put(username, account);
         }
-        return user;
+        return account;
     }
 
     public CookieConfig getCookieConfig() {

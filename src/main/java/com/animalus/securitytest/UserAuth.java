@@ -21,8 +21,8 @@ public interface UserAuth {
      * like credit cards, etc.). In other words the rememberMe token is not sufficient for this job. In those
      * cases we rely only on the isAuthenticated method.
      */
-    User getRemembered();
+    UserAccount getRemembered();
 
-    User getAuthenticated();
+    UserAccount getAuthenticated();
 
 }

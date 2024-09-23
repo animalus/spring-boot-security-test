@@ -4,4 +4,5 @@ public enum Global {
     INST;
 
     public AccountStore accountStore;
+    public UserAuth auth;
 }

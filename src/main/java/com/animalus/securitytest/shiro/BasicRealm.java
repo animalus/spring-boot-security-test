@@ -16,7 +16,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 import com.animalus.securitytest.AccountStore;
-import com.animalus.securitytest.User;
+import com.animalus.securitytest.UserAccount;
 
 public class BasicRealm extends AuthorizingRealm {
     private static final String REALM_NAME = "BASIC";
@@ -37,18 +37,18 @@ public class BasicRealm extends AuthorizingRealm {
             throw new AuthenticationException("No user specified.");
         }
 
-        User user = accountStore.get(uuid);
+        UserAccount account = accountStore.get(uuid);
 
-        if (user == null) {
+        if (account == null) {
             throw new AuthenticationException("No account found for user [%s]".formatted(uuid));
         }
 
-        if (StringUtils.isBlank(user.getHashedPass())) {
+        if (StringUtils.isBlank(account.getUser().getHashedPass())) {
             throw new AuthenticationException("No password set.");
         }
 
         SimpleAuthenticationInfo info;
-        info = new SimpleAuthenticationInfo(uuid, user.getHashedPass().toCharArray(), REALM_NAME);
+        info = new SimpleAuthenticationInfo(uuid, account.getUser().getHashedPass().toCharArray(), REALM_NAME);
 
         CredentialsMatcher matcher = new SimpleCredentialsMatcher();
         if (!matcher.doCredentialsMatch(upToken, info)) {
@@ -66,12 +66,12 @@ public class BasicRealm extends AuthorizingRealm {
             return new SimpleAuthorizationInfo();
         }
 
-        User user = accountStore.get(uuid);
+        UserAccount account = accountStore.get(uuid);
 
-        if (user == null) {
+        if (account == null) {
             return new SimpleAuthorizationInfo();
         }
 
-        return new SimpleAuthorizationInfo(new HashSet<>(user.getRoles()));
+        return new SimpleAuthorizationInfo(new HashSet<>(account.getRoles()));
     }
 }

@@ -11,6 +11,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.animalus.securitytest.AccountStore;
 import com.animalus.securitytest.User;
+import com.animalus.securitytest.UserAccount;
 import com.animalus.securitytest.UserAuth;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class ShiroAuth implements UserAuth {
         return SecurityUtils.getSubject();
     }
 
-    private User fromSubject(Function<Subject, Boolean> filter) {
+    private UserAccount fromSubject(Function<Subject, Boolean> filter) {
         Subject subject = getSubject();
 
         if (subject == null) {
@@ -54,15 +55,14 @@ public class ShiroAuth implements UserAuth {
     @Override
     public User login(HttpServletRequest request, HttpServletResponse response,
                                    String username, String password, boolean rememberMe) throws Exception {
-        User user = accountStore.getByName(username);
+        UserAccount account = accountStore.getByName(username);
+        User user = account.getUser();
         String hashedPass = new Sha512Hash(password, user.getSalt(), 200000).toHex();
 
         UsernamePasswordToken token;
         token = new UsernamePasswordToken(user.getUuid(), hashedPass, rememberMe);
         try {
             getSubject().login(token);
-        } catch (AuthenticationException ex) {
-            throw new AuthorizationException(ex.getMessage());
         } finally {
             token.clear();
         }
@@ -92,12 +92,12 @@ public class ShiroAuth implements UserAuth {
      * cases we rely only on the isAuthenticated method.
      */
     @Override
-    public User getRemembered() {
+    public UserAccount getRemembered() {
         return fromSubject(subject -> subject.isAuthenticated() || subject.isRemembered());
     }
 
     @Override
-    public User getAuthenticated() {
+    public UserAccount getAuthenticated() {
         return fromSubject(subject -> subject.isAuthenticated());
     }
 }

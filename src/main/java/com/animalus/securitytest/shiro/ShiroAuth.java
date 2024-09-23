@@ -1,0 +1,103 @@
+package com.animalus.securitytest.shiro;
+
+import java.util.function.Function;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.subject.Subject;
+
+import com.animalus.securitytest.AccountStore;
+import com.animalus.securitytest.User;
+import com.animalus.securitytest.UserAuth;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public class ShiroAuth implements UserAuth {
+    private final AccountStore accountStore;
+
+    public ShiroAuth(AccountStore accountStore) {
+        this.accountStore = accountStore;
+    }
+
+    private Subject getSubject() {
+        //
+        // Get the current subject out of the current thread.
+        //
+        return SecurityUtils.getSubject();
+    }
+
+    private User fromSubject(Function<Subject, Boolean> filter) {
+        Subject subject = getSubject();
+
+        if (subject == null) {
+            return null;
+        }
+
+        if (!filter.apply(subject)) {
+            return null;
+        }
+        Object principal = subject == null ? null : subject.getPrincipal();
+
+        if (principal == null) {
+            return null;
+        }
+
+        String uuid = principal.toString();
+
+        return accountStore.get(uuid);
+    }
+
+    @Override
+    public User login(HttpServletRequest request, HttpServletResponse response,
+                                   String username, String password, boolean rememberMe) throws Exception {
+        User user = accountStore.getByName(username);
+        String hashedPass = new Sha512Hash(password, user.getSalt(), 200000).toHex();
+
+        UsernamePasswordToken token;
+        token = new UsernamePasswordToken(user.getUuid(), hashedPass, rememberMe);
+        try {
+            getSubject().login(token);
+        } catch (AuthenticationException ex) {
+            throw new AuthorizationException(ex.getMessage());
+        } finally {
+            token.clear();
+        }
+        return user;
+    }
+
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        Subject subject = getSubject();
+        if (subject != null) {
+            //
+            // NOTE: This will also invalidate the current session so no need
+            // to do that explicitly.
+            //
+            subject.logout();
+        }
+    }
+
+    /**
+     * isAuthenticated() means that it was Authenticated during this session
+     * and we are not relying on the rememberMe token. isRemembered() bascially says that
+     * Shiro has obtained this token because we had the rememberMe token set BUT we haven't
+     * authenticated the user **this** session (maybe the server was rebooted or we hit session timeout).
+     * TODO: Break this out into secure getUserAccount and stanndard for use when we want to make
+     * sure the user is who they say they are (e.g. to change their password, send highly secure information
+     * like credit cards, etc.). In other words the rememberMe token is not sufficient for this job. In those
+     * cases we rely only on the isAuthenticated method.
+     */
+    @Override
+    public User getRemembered() {
+        return fromSubject(subject -> subject.isAuthenticated() || subject.isRemembered());
+    }
+
+    @Override
+    public User getAuthenticated() {
+        return fromSubject(subject -> subject.isAuthenticated());
+    }
+}

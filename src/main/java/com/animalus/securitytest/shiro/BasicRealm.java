@@ -15,8 +15,8 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import com.animalus.securitytest.AccountStore;
-import com.animalus.securitytest.UserAccount;
+import com.animalus.securitytest.user.AccountStore;
+import com.animalus.securitytest.user.UserAccount;
 
 public class BasicRealm extends AuthorizingRealm {
     private static final String REALM_NAME = "BASIC";

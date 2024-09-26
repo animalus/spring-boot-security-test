@@ -1,6 +1,11 @@
-package com.animalus.securitytest;
+package com.animalus.securitytest.api;
 
 import java.util.function.Supplier;
+
+import com.animalus.securitytest.Global;
+import com.animalus.securitytest.user.AuthFunction;
+import com.animalus.securitytest.user.UserAccount;
+import com.animalus.securitytest.user.UserAuth;
 
 public abstract class AbstractController {
     protected UserAuth auth = Global.INST.auth;

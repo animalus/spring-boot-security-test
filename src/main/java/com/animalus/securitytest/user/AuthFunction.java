@@ -1,4 +1,4 @@
-package com.animalus.securitytest;
+package com.animalus.securitytest.user;
 
 public interface AuthFunction {
     Boolean apply(UserAccount account);

@@ -1,10 +1,12 @@
-package com.animalus.securitytest;
+package com.animalus.securitytest.user;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.shiro.crypto.hash.Sha512Hash;
+
+import com.animalus.securitytest.CookieConfig;
 
 public class AccountStore {
     private Map<String, UserAccount> uuidMap = new HashMap<>();

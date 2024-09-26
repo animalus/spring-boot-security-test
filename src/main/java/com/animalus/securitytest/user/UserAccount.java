@@ -1,4 +1,4 @@
-package com.animalus.securitytest;
+package com.animalus.securitytest.user;
 
 import java.util.List;
 

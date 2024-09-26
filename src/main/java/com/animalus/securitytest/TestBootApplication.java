@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 
 import com.animalus.securitytest.shiro.ShiroAuth;
+import com.animalus.securitytest.user.AccountStore;
 
 @SpringBootApplication(scanBasePackages = { "com.animalus.securitytest" })
 // exclude = { SecurityAutoConfiguration.class })

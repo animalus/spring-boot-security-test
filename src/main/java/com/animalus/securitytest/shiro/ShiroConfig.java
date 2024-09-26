@@ -18,9 +18,9 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import com.animalus.securitytest.AccountStore;
 import com.animalus.securitytest.CookieConfig;
 import com.animalus.securitytest.Global;
+import com.animalus.securitytest.user.AccountStore;
 
 /**
  * Since upgrading my Spring Boot to 3.3.0 and Shiro to 1.12.0 I now get the following warning in my log file ...

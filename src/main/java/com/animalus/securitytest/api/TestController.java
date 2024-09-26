@@ -1,4 +1,4 @@
-package com.animalus.securitytest;
+package com.animalus.securitytest.api;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

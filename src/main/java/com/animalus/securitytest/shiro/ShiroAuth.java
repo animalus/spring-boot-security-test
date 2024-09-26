@@ -6,10 +6,10 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
-import com.animalus.securitytest.AccountStore;
-import com.animalus.securitytest.User;
-import com.animalus.securitytest.UserAccount;
-import com.animalus.securitytest.UserAuth;
+import com.animalus.securitytest.user.AccountStore;
+import com.animalus.securitytest.user.User;
+import com.animalus.securitytest.user.UserAccount;
+import com.animalus.securitytest.user.UserAuth;
 
 public class ShiroAuth implements UserAuth {
     private final AccountStore accountStore;

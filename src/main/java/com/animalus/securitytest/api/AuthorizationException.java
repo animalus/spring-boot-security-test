@@ -1,4 +1,4 @@
-package com.animalus.securitytest;
+package com.animalus.securitytest.api;
 
 public class AuthorizationException extends RuntimeException {
     public AuthorizationException() {

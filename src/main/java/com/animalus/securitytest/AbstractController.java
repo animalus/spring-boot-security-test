@@ -3,9 +3,8 @@ package com.animalus.securitytest;
 import java.util.function.Supplier;
 
 public abstract class AbstractController {
-    private UserAuth auth = Global.INST.auth;
+    protected UserAuth auth = Global.INST.auth;
     final static String ROLE_ADMIN = "admin";
-    final static String ROLE_DATA_MANAGER = "data_manager";
 
     protected Supplier<UserAccount> USER_NOT_REQ = () -> auth.getRemembered();
 

@@ -35,4 +35,10 @@ public class UserAccount {
         }
         return this;
     }
+
+    public void checkPassword(final String pwd) {
+        if (!getUser().checkPassword(pwd)) {
+            throw new AuthorizationException("Invalid credentials");
+        }
+    }
 }

@@ -3,9 +3,7 @@ package com.animalus.securitytest.shiro;
 import java.util.function.Function;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.subject.Subject;
 
@@ -13,9 +11,6 @@ import com.animalus.securitytest.AccountStore;
 import com.animalus.securitytest.User;
 import com.animalus.securitytest.UserAccount;
 import com.animalus.securitytest.UserAuth;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 public class ShiroAuth implements UserAuth {
     private final AccountStore accountStore;
@@ -53,14 +48,10 @@ public class ShiroAuth implements UserAuth {
     }
 
     @Override
-    public User login(HttpServletRequest request, HttpServletResponse response,
-                                   String username, String password, boolean rememberMe) throws Exception {
+    public User login(String username, String password, boolean rememberMe) throws Exception {
         UserAccount account = accountStore.getByName(username);
         User user = account.getUser();
-        String hashedPass = new Sha512Hash(password, user.getSalt(), 200000).toHex();
-
-        UsernamePasswordToken token;
-        token = new UsernamePasswordToken(user.getUuid(), hashedPass, rememberMe);
+        UsernamePasswordToken token = new UsernamePasswordToken(user.getUuid(), user.hashString(password), rememberMe);
         try {
             getSubject().login(token);
         } finally {
@@ -70,7 +61,7 @@ public class ShiroAuth implements UserAuth {
     }
 
     @Override
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public void logout() {
         Subject subject = getSubject();
         if (subject != null) {
             //

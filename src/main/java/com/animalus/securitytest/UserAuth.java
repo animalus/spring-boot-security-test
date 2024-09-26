@@ -1,15 +1,10 @@
 package com.animalus.securitytest;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-
 public interface UserAuth {
 
-    User login(HttpServletRequest request, HttpServletResponse response, String username,
-                            String password, boolean rememberMe) throws Exception;
+    User login(String username, String password, boolean rememberMe) throws Exception;
 
-    void logout(HttpServletRequest request, HttpServletResponse response);
+    void logout();
 
     /**
      * isAuthenticated() means that it was Authenticated during this session

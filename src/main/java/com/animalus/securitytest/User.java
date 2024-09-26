@@ -1,7 +1,5 @@
 package com.animalus.securitytest;
 
-import org.apache.shiro.crypto.hash.Sha512Hash;
-
 public class User {
     private String salt;
     private String uuid;
@@ -32,7 +30,7 @@ public class User {
     }
 
     public String hashString(final String text) {
-        return new Sha512Hash(text, salt, 200000).toHex();
+        return AccountStore.hashString(text, salt);
     }
 
     public boolean checkPassword(String pwd) {

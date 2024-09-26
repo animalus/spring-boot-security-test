@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.subject.Subject;
 
 import com.animalus.securitytest.AccountStore;

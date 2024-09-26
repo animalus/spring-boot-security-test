@@ -65,14 +65,6 @@ public class ShiroConfig {
         sessionManager.getSessionIdCookie().setSameSite(SameSiteOptions.NONE);
         securityManager.setSessionManager(sessionManager);
 
-        //
-        // cipher key created with...Rather than use the hard-coded one in Shiro that
-        // anyone can read in the source-code.
-        //
-        // AesCipherService aes = new AesCipherService();
-        // byte[] key = aes.generateNewKey().getEncoded();
-        // String base64 = Base64.encodeToString(key);
-        //
         CookieConfig cookieConfig = accountStore.getCookieConfig(); 
 
         CookieRememberMeManager rmm = new CookieRememberMeManager();
@@ -86,9 +78,7 @@ public class ShiroConfig {
         if (sso.isPresent()) {
             cookie.setSameSite(sso.get());
         }
-        //
-        // NOTE: One year is the default if we don't set it inside the shiro Cookie.
-        //
+
         Integer rememberMeTimeoutDays = cookieConfig.getRememberMeDays();
         if (rememberMeTimeoutDays != null) {
             cookie.setMaxAge(60 * 60 * 24 * rememberMeTimeoutDays);

@@ -6,36 +6,67 @@
     <title>Spring Security Test</title>
 </head>
 <body>
-    <button id="loginbob">Login Bob</button>
-    <button id="loginadmin">Login Admin</button>
-    <button id="loginsponsor">Login Sponsor</button>
+    <div>
+        <button onclick="login('bob')">Login Bob</button>
+        <button onclick="login('admin')">Login Admin</button>
+        <button onclick="login('sponsor')">Login Sponsor</button>
+        <button onclick="logout()">Logout</button>
+        <span>Logged In:</span><span style="color: green; margin-left: 8px" id="user"></span>
+    </div>
+    <div>
+        <button onclick="call('coffee/public')">Coffee Public</button>
+        <button onclick="call('coffee/user')">Coffee User</button>
+        <button onclick="call('coffee/admin')">Coffee Admin</button>
+        <button onclick="call('coffee/sponsor')">Coffee Sponsor</button>
+    </div>
     <pre id="result"></pre>
 
     <script>
-        function call(url, method = "GET", body = null) {
-            fetch("http://localhost:8080/" + url, { method, headers: {"Content-Type": "application/json"}, body})
+        function logout() {
+            call("user/logout", "POST").then(() => setUser(null));
+        }
+
+        function setUser(user) {
+            document.getElementById('user').textContent = user?.username
+        }
+
+        function login(username) {
+            call("user/login", "POST", {username, password: "12345678", rememberMe: true}).then(data => {
+                setUser(data);
+            });
+        }
+
+        function readResponse(response) {
+            if (response.headers.get('content-length') === '0') {
+                return null;
+            }
+            return response.json();
+        }
+
+        function call(url, method = "GET", data = null) {
+            const body = data ? JSON.stringify(data) : null;
+            return fetch("http://localhost:8080/" + url,
+                { method, headers: {"Content-Type": "application/json"}, body, mode: "cors", credentials: "include"})
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
+                        return response.json().then(error => {
+                            throw new Error(`${response.status}: ${error.message}`);
+                        });
                     }
-                    return response.json();
+                    return readResponse(response);
                 })
                 .then(data => {
-                    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                    document.getElementById('result').textContent = data ? JSON.stringify(data, null, 2) : null;
+                    return data;
                 })
                 .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                    document.getElementById('result').textContent = 'Error: ' + error.message;
+                    document.getElementById('result').textContent = 'Error: ' + error?.message;
                 });
         }
 
         window.onload = () => {
-            call("checklogin");
+            call("user/checklogin").then(data => setUser(data));
         }
-
-        document.getElementById('loginbob').addEventListener('click', () => {
-            call("login", "POST", {usrname: "bob", password: "12345678", rememberMe: true});
-        });
     </script>
 </body>
 </html>

@@ -9,7 +9,7 @@ import com.animalus.securitytest.user.UserAuth;
 
 public abstract class AbstractController {
     protected UserAuth auth = Global.INST.auth;
-    final static String ROLE_ADMIN = "admin";
+    public final static String ROLE_ADMIN = "admin"; 
 
     protected Supplier<UserAccount> USER_NOT_REQ = () -> auth.getRemembered();
 

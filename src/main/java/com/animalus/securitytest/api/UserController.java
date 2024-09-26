@@ -12,9 +12,13 @@ import com.animalus.securitytest.user.User;
 @RestController
 @RequestMapping("user")
 public class UserController extends AbstractController {
+    private WebUser toWeb(User user) {
+        return user == null ? null : new WebUser(user.getUuid(), user.getUsername());
+    }
+
     @PostMapping("login")
-    public User login(@RequestBody final LoginAttempt loginAttempt) throws Exception {
-        return auth.login(loginAttempt.username, loginAttempt.password, loginAttempt.rememberMe);
+    public WebUser login(@RequestBody final LoginAttempt loginAttempt) throws Exception {
+        return toWeb(auth.login(loginAttempt.username, loginAttempt.password, loginAttempt.rememberMe));
     }
 
     @PostMapping("logout")
@@ -23,9 +27,9 @@ public class UserController extends AbstractController {
     }
 
     @GetMapping("checklogin")
-    public User checklogin() throws Exception {
+    public WebUser checklogin() throws Exception {
         return userFunc(USER_NOT_REQ, (account) -> {
-            return account == null ? null : account.getUser();
+            return toWeb(account == null ? null : account.getUser());
         });
     }
 
@@ -43,4 +47,6 @@ public class UserController extends AbstractController {
 
     static record PasswordChange(String passwordOld, String password) {
     }
+
+    static record WebUser(String uuid, String username){}
 }

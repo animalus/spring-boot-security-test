@@ -36,11 +36,8 @@
             });
         }
 
-        function readResponse(response) {
-            if (response.headers.get('content-length') === '0') {
-                return null;
-            }
-            return response.json();
+        function showResult(content) {
+            document.getElementById('result').textContent = content;
         }
 
         function call(url, method = "GET", data = null) {
@@ -53,14 +50,17 @@
                             throw new Error(`${response.status}: ${error.message}`);
                         });
                     }
-                    return readResponse(response);
+                    if (response.headers.get('content-length') === '0') {
+                        return null;
+                    }
+                    return response.json();
                 })
                 .then(data => {
-                    document.getElementById('result').textContent = data ? JSON.stringify(data, null, 2) : null;
+                    showResult(data ? JSON.stringify(data, null, 2) : null);
                     return data;
                 })
                 .catch(error => {
-                    document.getElementById('result').textContent = 'Error: ' + error?.message;
+                    showResult('Error: ' + error?.message);
                 });
         }
 
